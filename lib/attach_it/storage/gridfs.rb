@@ -16,7 +16,9 @@ class Gridfs < Storage
     end
 
     begin
-      gridfs_id = @grid.put(image_options.assigned_file, :filename => 'original_' + image_options.file_name, :_id => "#{image_options.object_id}_#{image_options.name}_original")
+      filename = 'original_' + image_options.file_name
+      filename = image_options.filename('original')
+      gridfs_id = @grid.put(image_options.assigned_file, :filename => filename, :_id => "#{image_options.object_id}_#{image_options.name}_original")
     rescue Exception => exception
       image_options.add_error(exception.to_s)
     end
