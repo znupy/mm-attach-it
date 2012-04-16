@@ -2,7 +2,7 @@ require 'wand'
 
 class AttachmentOptions
 
-  attr_accessor :styles, :assigned_file, :object_id, :name
+  attr_accessor :styles, :searchable_filename, :assigned_file, :object_id, :name
 
   def initialize(model = nil, name = nil, options = {})
     @model = model
@@ -16,6 +16,7 @@ class AttachmentOptions
     @path = set_path(options[:path])
     @styles = set_styles(options[:styles])
     @storage = set_storage(options[:storage])
+    @searchable_filename = set_searchable_filename(options[:filename])
 
     if !@model.send("#{@name.to_s}_file_name").nil?
       @filename = @model.send("#{@name.to_s}_file_name")
@@ -52,6 +53,10 @@ class AttachmentOptions
     interpolate(@path, style_name)
   end
 
+  def filename(style_name = 'original')
+    interpolate(@searchable_filename, style_name) if @searchable_filename
+  end
+  
   def save
     unless @assigned_file.nil?
       @storage.flush_delete(@queued_for_delete)
@@ -120,6 +125,10 @@ class AttachmentOptions
     result
   end
 
+  def set_searchable_filename(filename = nil)
+    filename
+  end
+  
   def set_storage(storage_option = nil)
     storage_option = 'filesystem' if storage_option.nil?
     (storage_option == 'filesystem') ? Filesystem.new : Gridfs.new

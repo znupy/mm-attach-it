@@ -7,7 +7,9 @@ class Gridfs < Storage
   def flush_write(image_options = nil)
     image_options.styles.each do |style_name, style_value|
       begin
-        gridfs_id = @grid.put(transform(style_value, image_options.assigned_file.path).to_blob, :filename => style_name.to_s + '_' + image_options.file_name, :_id => "#{image_options.object_id}_#{image_options.name}_#{style_name}")
+        filename = style_name.to_s + '_' + image_options.file_name
+        filename = image_options.filename
+        gridfs_id = @grid.put(transform(style_value, image_options.assigned_file.path).to_blob, :filename => filename, :_id => "#{image_options.object_id}_#{image_options.name}_#{style_name}")
       rescue Exception => exception
         image_options.add_error(exception.to_s)
       end
